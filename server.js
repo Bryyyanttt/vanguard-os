@@ -16,10 +16,26 @@ if (fs.existsSync(FILE_PATH)) {
     }
 }
 
+// === MODIFICATO: Ora gestisce index.html, manifest.json e altri file ===
 const server = http.createServer((req, res) => {
-    fs.readFile(path.join(__dirname, 'index.html'), (err, content) => {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(content);
+    // Se non viene chiesto un file specifico, di default inviamo index.html
+    let filePath = req.url === '/' ? 'index.html' : req.url.substring(1);
+    filePath = path.join(__dirname, filePath.split('?')[0]); // Rimuove eventuali parametri della URL
+
+    fs.readFile(filePath, (err, content) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File non trovato');
+        } else {
+            // Riconosce automaticamente il tipo di file corretto per il browser
+            let contentType = 'text/html';
+            if (filePath.endsWith('.json')) contentType = 'application/json';
+            if (filePath.endsWith('.js')) contentType = 'application/javascript';
+            if (filePath.endsWith('.png')) contentType = 'image/png';
+
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(content);
+        }
     });
 });
 
@@ -50,5 +66,5 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(8080, '0.0.0.0', () => {
-    console.log('Vanguard Server con Salvataggio automatico attivo su porta 8080!');
+    console.log('Vanguard Server con supporto PWA attivo su porta 8080!');
 });
