@@ -415,6 +415,12 @@
     initToday();
     renderKPIs();
     setTimeout(calculateStats, 100); // Piccolo delay per far partire l'animazione delle barre
+
+    if ('service worker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker Registrato!'))
+        .catch(err => console.log('Errore SW:', err));
+    }
 </script>
 
 </body>
