@@ -3,425 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OS | Vanguard Elite Dashboard</title>
+    <title>Vanguard Matrix OS</title>
+    <!-- Collegamento alla tua PWA -->
     <link rel="manifest" href="manifest.json">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
-
-        :root {
-            /* Palette Vanguard Elite: Raffinata e Professionale */
-            --bg-base: #111827; /* Deep Slate - Sfondo principale */
-            --surface: #1f2937; /* Lighter Slate - Schede e contenitori */
-            --surface-hover: #374151; /* Slate Hover - Effetto hover */
-            
-            --border: #374151; /* Slate Border - Confini puliti */
-            
-            --text-main: #f1f5f9; /* Slate Light - Testo principale */
-            --text-muted: #94a3b8; /* Slate Muted - Testo secondario */
-            
-            /* Colori Accento professionali */
-            --accent-primary: #06b6d4; /* Teal - Pulito, concentrato */
-            --accent-primary-glow: rgba(6, 182, 212, 0.4);
-            
-            --accent-secondary: #f59e0b; /* Amber/Gold - Ricco, successo */
-            --accent-secondary-glow: rgba(245, 158, 11, 0.3);
-            
-            --success: #10b981; /* Emerald Green - Completamento pulito */
-            --danger: #e11d48; /* Crimson - Hard Stop e urgenze */
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .dashboard {
-            width: 100%;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 1.5rem;
-            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* HEADER */
-        .header {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 1rem;
-        }
-
-        .title h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            color: var(--text-main);
-        }
-        .title h1 span {
-            color: var(--accent-primary);
-            text-shadow: 0 0 15px var(--accent-primary-glow);
-        }
-        .title p { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin-top: 0.5rem;}
-        
-        .clock {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--accent-secondary);
-            text-shadow: 0 0 20px var(--accent-secondary-glow);
-        }
-        .clock span { color: var(--text-main); opacity: 0.5; }
-
-        /* CARDS */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.8rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-        .card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1);
-        }
-        .card h2 {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            margin-bottom: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-        }
-
-        /* STATS PROGRESS BARS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            grid-column: 1 / -1;
-        }
-        .stat-box {
-            background: rgba(255,255,255,0.02);
-            padding: 1.2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            transition: border-color 0.3s ease;
-        }
-        .stat-box:hover { border-color: var(--accent-secondary); }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-        .progress-bg {
-            width: 100%;
-            height: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-primary); /* Default */
-            width: 0%;
-            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s ease;
-            box-shadow: 0 0 15px var(--accent-primary-glow);
-            border-radius: 5px;
-        }
-
-        /* KPI LIST */
-        .kpi-list { display: flex; flex-direction: column; gap: 1rem; }
-        .kpi-item {
-            display: flex;
-            align-items: center;
-            padding: 1.2rem;
-            background: rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .kpi-item:hover {
-            border-color: var(--accent-primary);
-            background: rgba(6, 182, 212, 0.03);
-        }
-        .kpi-item.completed {
-            background: rgba(16, 185, 129, 0.08);
-            border-color: var(--success);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
-        }
-        .kpi-item.completed span {
-            text-decoration: line-through;
-            color: var(--text-muted);
-            opacity: 0.7;
-        }
-
-        /* CUSTOM CHECKBOX */
-        .checkbox {
-            width: 26px;
-            height: 26px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            margin-right: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            color: transparent;
-            font-weight: bold;
-        }
-        .kpi-item:hover .checkbox { border-color: var(--accent-primary); }
-        .kpi-item.completed .checkbox {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-        }
-
-        /* PROTOCOL TIMELINE */
-        .timeline { display: flex; flex-direction: column; gap: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;}
-        .timeline-item { display: flex; gap: 1.2rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);}
-        .timeline-item:last-child { border-bottom: none; }
-        .time { color: var(--accent-primary); font-weight: 700; min-width: 60px; }
-        .event { color: var(--text-main); }
-        .event-urgent { color: var(--danger); font-weight: bold; text-transform: uppercase; text-shadow: 0 0 10px rgba(225, 29, 72, 0.3);}
-
-        @media (max-width: 900px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr; }
-            body { padding: 1rem; }
-        }
-    </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="header">
-        <div class="title">
-            <h1>Vanguard <span>System</span></h1>
-            <p id="current-date">System Boot...</p>
-        </div>
-        <div class="clock" id="clock">00<span>:</span>00</div>
-    </div>
+    <!-- QUI VA IL TUO CODICE HTML DELLA DASHBOARD -->
+    <h1>Vanguard Dashboard</h1>
+    <div id="display-dati">In attesa di dati...</div>
+    <button onclick="inviaModifica()">Simula Modifica Dati</button>
 
-    <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-header">
-                <span>EXECUTION (OGGI)</span>
-                <span id="stat-day-val">0%</span>
-            </div>
-            <div class="progress-bg"><div class="progress-fill" id="stat-day-bar"></div></div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-header">
-                <span>PERFORMANCE (7 GIORNI)</span>
-                <span id="stat-week-val">0%</span>
-            </div>
-            <div class="progress-bg"><div class="progress-fill" id="stat-week-bar"></div></div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-header">
-                <span>CONSISTENZA (30 GIORNI)</span>
-                <span id="stat-month-val">0%</span>
-            </div>
-            <div class="progress-bg"><div class="progress-fill" id="stat-month-bar"></div></div>
-        </div>
-    </div>
+    <script>
+        // 1. Connessione WebSocket
+        const socket = new WebSocket(`ws://${window.location.hostname}:8080`);
 
-    <div class="card" style="grid-column: 1 / 2;">
-        <h2>⚡ Core Execution (Daily KPIs)</h2>
-        <div class="kpi-list" id="kpi-container">
-            </div>
-    </div>
+        socket.onopen = () => console.log("Connesso al server!");
 
-    <div class="card" style="grid-column: 2 / 3;">
-        <h2>📅 Protocollo</h2>
-        <div class="timeline">
-            <div class="timeline-item"><div class="time">08:30</div><div class="event">Deep Work: Algebra / Assembly</div></div>
-            <div class="timeline-item"><div class="time">12:30</div><div class="event">Decompressione Totale</div></div>
-            <div class="timeline-item"><div class="time">14:00</div><div class="event">Deep Work: Fisica 1 / Codice</div></div>
-            <div class="timeline-item"><div class="time">18:00</div><div class="event">Creative Flow (FL Studio)</div></div>
-            <div class="timeline-item"><div class="time">21:00</div><div class="event">Pianificazione Capodanno / CH</div></div>
-            <div class="timeline-item"><div class="time">23:00</div><div class="event-urgent">HARD STOP - Shutdown</div></div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Configurazione KPI
-    const KPIs = [
-        { id: 'deepwork', label: '5h di Deep Work Completate' },
-        { id: 'study', label: '3 Set di esercizi risolti (Fisica/Algebra)' },
-        { id: 'code', label: '1 Script/Progetto backend debuggato' },
-        { id: 'hardstop', label: 'Hard Stop ore 23:00 rispettato' }
-    ];
-
-    // Colori dinamici per le barre (Slate Teal -> Amber -> Gold)
-    const statColors = {
-        low: '#06b6d4', // Teal per performance base
-        medium: '#f59e0b', // Amber per consistenza
-        high: '#10b981' // Jade/Gold per eccellenza
-    };
-
-    // Core Logic Database (LocalStorage)
-    const db = {
-        get: () => JSON.parse(localStorage.getItem('vanguard_data')) || {},
-        save: (data) => localStorage.setItem('vanguard_data', JSON.stringify(data)),
-        getTodayStr: () => new Date().toLocaleDateString('en-CA') // YYYY-MM-DD
-    };
-
-    // Inizializzazione Dati Odierni
-    function initToday() {
-        const data = db.get();
-        const today = db.getTodayStr();
-        if (!data[today]) {
-            data[today] = {};
-            KPIs.forEach(kpi => data[today][kpi.id] = false);
-            db.save(data);
-        }
-    }
-
-    // Calcolo Statistiche
-    function calculateStats() {
-        const data = db.get();
-        const today = new Date();
-        
-        function getScoreForDays(daysBack) {
-            let totalTasks = 0;
-            let completedTasks = 0;
+        // 2. RICEZIONE: Quando il server manda i dati, aggiorniamo la pagina
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
             
-            for (let i = 0; i < daysBack; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() - i);
-                const dateStr = d.toLocaleDateString('en-CA');
+            if (data.type === 'matrix_broadcast') {
+                console.log("Dati ricevuti, aggiornamento in corso...");
                 
-                if (data[dateStr]) {
-                    totalTasks += KPIs.length;
-                    completedTasks += Object.values(data[dateStr]).filter(v => v === true).length;
-                } else if (i !== 0) { // Se non ci sono dati passati ma il target esiste
-                    totalTasks += KPIs.length;
-                }
+                // AGGIORNA QUI: Metti qui il codice che aggiorna i tuoi grafici/testi
+                document.getElementById('display-dati').innerText = JSON.stringify(data.payload);
             }
-            return totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+        };
+
+        // 3. INVIO: Funzione da chiamare quando cambi qualcosa nella dashboard
+        function inviaModifica(nuoviDati) {
+            // Se non passi dati, ne crea uno di test
+            const payload = nuoviDati || { valore: Math.random() };
+            
+            const messaggio = {
+                type: 'matrix_broadcast',
+                payload: payload
+            };
+
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(messaggio));
+            }
         }
 
-        const scores = [
-            { val: getScoreForDays(1), bar: 'stat-day-bar', txt: 'stat-day-val' },
-            { val: getScoreForDays(7), bar: 'stat-week-bar', txt: 'stat-week-val' },
-            { val: getScoreForDays(30), bar: 'stat-month-bar', txt: 'stat-month-val' }
-        ];
-
-        // Aggiorna UI con Colori Dinamici
-        scores.forEach(score => {
-            const barEl = document.getElementById(score.bar);
-            const txtEl = document.getElementById(score.txt);
-            
-            txtEl.innerText = `${score.val}%`;
-            barEl.style.width = `${score.val}%`;
-            
-            // Applica colore dinamico in base alla percentuale
-            if (score.val < 50) {
-                barEl.style.backgroundColor = statColors.low;
-                barEl.style.boxShadow = `0 0 15px ${statColors.low}66`;
-            } else if (score.val < 90) {
-                barEl.style.backgroundColor = statColors.medium;
-                barEl.style.boxShadow = `0 0 15px ${statColors.medium}66`;
-            } else {
-                barEl.style.backgroundColor = statColors.high;
-                barEl.style.boxShadow = `0 0 15px ${statColors.high}66`;
-            }
-        });
-    }
-
-    // Renderizzazione Interfaccia KPIs
-    function renderKPIs() {
-        const container = document.getElementById('kpi-container');
-        container.innerHTML = '';
-        const data = db.get();
-        const today = db.getTodayStr();
-
-        KPIs.forEach(kpi => {
-            const isCompleted = data[today][kpi.id];
-            
-            const div = document.createElement('div');
-            div.className = `kpi-item ${isCompleted ? 'completed' : ''}`;
-            div.onclick = () => toggleKPI(kpi.id, div);
-            
-            div.innerHTML = `
-                <div class="checkbox">✓</div>
-                <span>${kpi.label}</span>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    // Toggle KPI
-    function toggleKPI(id, element) {
-        const data = db.get();
-        const today = db.getTodayStr();
-        
-        data[today][id] = !data[today][id]; // Inverti stato
-        db.save(data);
-        
-        // Animazione UI
-        if(data[today][id]) {
-            element.classList.add('completed');
-        } else {
-            element.classList.remove('completed');
+        // Registrazione Service Worker per PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('PWA Service Worker registrato'));
         }
-        
-        calculateStats(); // Ricalcola subito le statistiche
-    }
-
-    // Orologio e Data
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('clock').innerHTML = `${String(now.getHours()).padStart(2, '0')}<span>:</span>${String(now.getMinutes()).padStart(2, '0')}`;
-        
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').innerText = now.toLocaleDateString('it-IT', options).toUpperCase();
-    }
-
-    // Boot System
-    setInterval(updateClock, 1000);
-    updateClock();
-    initToday();
-    renderKPIs();
-    setTimeout(calculateStats, 100); // Piccolo delay per far partire l'animazione delle barre
-
-    if ('service worker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker Registrato!'))
-        .catch(err => console.log('Errore SW:', err));
-    }
-</script>
-
+    </script>
 </body>
 </html>
